@@ -1,6 +1,9 @@
 package com.leoram.emblemgenerator.v1;
 
 import com.leoram.emblemgenerator.dto.Base64DataUrlDTO;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.process.ImageProcessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,12 +27,27 @@ public class BlazonController {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         String DataUrl = "data:image/png;base64,";
         try{
-            BufferedImage img = ImageIO.read(new File("C:\\Users\\Sanya\\IdeaProjects\\EmblemGeneratror\\src\\main\\resources\\img\\white.png"));
-            ImageIO.write(img, "png", bos);
-            byte[] bosBytes = bos.toByteArray();
-            String encoded = Base64.getEncoder().encodeToString(bosBytes);
-            return ResponseEntity.ok(new Base64DataUrlDTO(DataUrl + encoded));
+            BufferedImage background = ImageIO.read(new File("C:\\Users\\Sanya\\IdeaProjects\\EmblemGeneratror\\src\\main\\resources\\img\\white.png")); // Достаём файлы
+            BufferedImage img1 = ImageIO.read(new File("C:\\Users\\Sanya\\IdeaProjects\\EmblemGeneratror\\src\\main\\resources\\img\\test1.png"));
+            BufferedImage img2 = ImageIO.read(new File("C:\\Users\\Sanya\\IdeaProjects\\EmblemGeneratror\\src\\main\\resources\\img\\test2.png"));
+            BufferedImage img3 = ImageIO.read(new File("C:\\Users\\Sanya\\IdeaProjects\\EmblemGeneratror\\src\\main\\resources\\img\\test3.png"));
 
+            int w = Math.max(background.getWidth(), img1.getWidth()); // Получаём максимальную длину и ширину
+            int h = Math.max(background.getHeight(), img1.getHeight());
+
+            BufferedImage outImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB); // Создаём буффер в памяти для результата
+
+            Graphics g = outImg.getGraphics(); // Создаём объект для работы с графикой
+            g.drawImage(background, 0, 0, null); // По очереди накладываем картинки в пока-что пустой результат
+            g.drawImage(img1, 0, 0, null);
+            g.drawImage(img2, 0, 0, null);
+            g.drawImage(img3, 0, 0, null);
+
+            ImageIO.write(outImg, "png", bos); // Результат в формате png кидае в ByteArrayOutputStream
+
+            String base64output = Base64.getEncoder().encodeToString(bos.toByteArray()); // Кодируем в Base64
+
+            return ResponseEntity.ok(new Base64DataUrlDTO(DataUrl + base64output)); // Возвращаем результат
         }
         catch (IOException e){
             e.printStackTrace();
