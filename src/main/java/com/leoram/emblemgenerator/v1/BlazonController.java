@@ -1,9 +1,8 @@
 package com.leoram.emblemgenerator.v1;
 
 import com.leoram.emblemgenerator.dto.Base64DataUrlDTO;
-import ij.IJ;
-import ij.ImagePlus;
-import ij.process.ImageProcessor;
+import com.leoram.emblemgenerator.img.ImgMirrorer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +20,9 @@ import java.util.Base64;
 @RestController
 @RequestMapping("/v1")
 public class BlazonController {
+
+    @Autowired
+    private ImgMirrorer imgMirrorer;
 
     @GetMapping("/generate")
     public ResponseEntity<Base64DataUrlDTO> getBlazon(){
@@ -41,7 +43,7 @@ public class BlazonController {
             g.drawImage(background, 0, 0, null); // По очереди накладываем картинки в пока-что пустой результат
             g.drawImage(img1, 0, 0, null);
             g.drawImage(img2, 0, 0, null);
-            g.drawImage(img3, 0, 0, null);
+            g.drawImage(imgMirrorer.mirror(img3), 0, 0, null);
 
             ImageIO.write(outImg, "png", bos); // Результат в формате png кидае в ByteArrayOutputStream
 
