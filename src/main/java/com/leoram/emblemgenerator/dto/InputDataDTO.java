@@ -10,22 +10,35 @@ import java.util.ArrayList;
 public class InputDataDTO {
 
     public enum blazonType {
-        HORISONTAL,
-        VERTICAL,
-        QUART,
-        PLAIN
+        PLAIN(1),
+        HORISONTAL(2),
+        VERTICAL(3),
+        QUART(4);
+
+        private final int Int;
+
+        blazonType(int Int) {
+            this.Int = Int;
+        }
+
+        public int getInt() {
+            return Int;
+        }
     }
 
     @Getter
-    @NonNull        
-    ArrayList<String> background;
+    @NonNull
+    @Setter        
+    ArrayList<BackgroundDTO> background;
 
     @Getter
     @NonNull
-    ArrayList<Integer> emblems;
+    @Setter        
+    ArrayList<EmblemDTO> emblems;
 
     @Getter
     @NonNull
+    @Setter        
     blazonType type;
 
 }
